@@ -48,6 +48,7 @@ public class cleanStringDirective extends Directive{
             return null;
         }
 
+        CleanStringMe = CleanStringMe.trim();
         CleanStringMe =  Normalizer.normalize(CleanStringMe, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
         CleanStringMe = CleanStringMe.toLowerCase();
         CleanStringMe = CleanStringMe.replaceAll("[^A-Za-z0-9]", "-");
