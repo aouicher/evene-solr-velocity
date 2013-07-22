@@ -18,11 +18,6 @@ import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.directive.Directive;
 import org.apache.velocity.runtime.parser.node.Node;
 
-import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-
 public class cryptUrlDirective extends Directive {
 
     public String getName() {
@@ -64,69 +59,21 @@ public class cryptUrlDirective extends Directive {
         return new StringBuffer(str).reverse().toString();
     }
 
+    // Simplification de la fonction strtr
     public String strtr(String str, String from, String to) {
-        //String          fr;
-        Integer i = 0;
-        Integer j = 0;
-        Integer lenStr = 0;
-        Integer lenFrom = 0;
-        Boolean tmpStrictForIn = false;
-        Boolean fromTypeStr;
-        Boolean toTypeStr;
-        Character istr;
-        ArrayList<String> tmpFrom = new ArrayList<String>();
-        ArrayList<String> tmpTo = new ArrayList<String>();
-        String ret;
-        Boolean match = false;
-        ret = "";
-
-        // Received replace_pairs?
-        // Convert to normal from->to chars
-
-        //if (typeof from === 'object') {
-        //tmpStrictForIn = this.ini_set('phpjs.strictForIn', false); // Not thread-safe; temporarily set to true
-        from = new StringBuffer(from).reverse().toString();
-
-
-        for (char fr : from.toCharArray()) {
-            tmpFrom.add(Character.toString(fr));
-            tmpTo.add(Character.toString(fr));
-        }
-
-        // Walk through subject and replace chars when needed
-        lenStr = str.length();
-        lenFrom = from.length();
-
-        fromTypeStr = from instanceof String;
-        toTypeStr = to instanceof String;
-
-
-        for (i = 0; i < lenStr; i++) {
-            match = false;
-            if (fromTypeStr) {
-                istr = str.charAt(i);
-                for (j = 0; j < lenFrom; j++) {
-                    if (istr == from.charAt(j)) {
-                        match = true;
-                        break;
-                    }
-                }
-            } else {
-                for (j = 0; j < lenFrom; j++) {
-                    if (str.substring(i, tmpFrom.get(j).length()) == tmpFrom.get(j)) {
-                        match = true;
-                        // Fast forward
-                        i = (i + tmpFrom.get(j).length()) - 1;
-                        break;
-                    }
+        StringBuilder strb = null;
+        for (int i = 0, length = str.length(); i < length; i++) {
+            char lettre = str.charAt(i);
+            int position = from.indexOf(lettre);
+            if (position >= 0) {
+                lettre = to.charAt(position);
+                if (strb == null) {
+                    strb = new StringBuilder(length);
+                    strb.append(str, 0, i);
                 }
             }
-            if (match) {
-                ret += to.charAt(j);
-            } else {
-                ret += str.charAt(i);
-            }
+            if (strb != null) strb.append(lettre);
         }
-        return ret;
+        return strb != null ? strb.toString() : str;
     }
 }
